@@ -12,7 +12,7 @@ var config = {
     },
     module: {
         rules: [{
-            test: /\.js?/,
+            test: /\.(js|mjs|jsx|ts|tsx)$/,
             include: SRC_DIR,
             loader: "babel-loader",
             options: {

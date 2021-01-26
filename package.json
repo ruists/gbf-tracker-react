@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "npm run build",
-    "build": "webpack -d eval --mode=\"development\" & copy src\\index.html dist\\index.html & webpack serve",
+    "build": "webpack -d eval --mode=\"development\" && copy src\\index.html dist\\index.html && webpack serve --mode=\"development\"",
     "build:prod": "webpack -p --mode=\"production\" && copy src/index.html dist/index.html"
   },
   "keywords": [
