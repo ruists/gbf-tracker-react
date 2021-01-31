@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export class Header extends React.Component {
   render() {
@@ -35,34 +36,17 @@ export class Header extends React.Component {
                   aria-labelledby="referenceDropdown"
                 >
                   <li>
-                    <a className="dropdown-item" href="#">
-                      Characters
-                    </a>
+                    <Link className="dropdown-item" to="/refCharacter">Characters</Link>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">
-                      Weapons
-                    </a>
+                    <Link className="dropdown-item" to="/refWeapon">Weapons</Link>
                   </li>
                   <li>
-                    <a className="dropdown-item" href="#">
-                      Summons
-                    </a>
+                    <Link className="dropdown-item" to="/refSummon">Summons</Link>
                   </li>
                 </ul>
               </li>
             </ul>
-            <form className="d-flex">
-              <input
-                className="form-control me-2"
-                type="search"
-                placeholder="Search"
-                aria-label="Search"
-              />
-              <button className="btn btn-outline-success" type="submit">
-                Search
-              </button>
-            </form>
           </div>
         </div>
       </nav>
