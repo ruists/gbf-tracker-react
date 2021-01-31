@@ -1,0 +1,27 @@
+.row-grid {
+    height: 75px;
+    padding: 2px;
+}
+
+.row-grid-image {
+    margin-left: 0;
+    margin-right: 0;
+}
+
+.row-grid img {
+    max-height: 100%;
+    max-width: 100%;
+}
+
+.searchField {
+    padding-left: 5px;
+    margin-bottom: 5px
+}
+
+.filter-button-group {
+    padding-top: 1%
+}
+
+.full-width {
+    width:100%
+}
