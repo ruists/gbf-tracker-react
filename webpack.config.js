@@ -25,6 +25,10 @@ var config = {
           plugins: ["@babel/plugin-proposal-class-properties"],
         },
       },
+      {
+        test: /\.css$/i,
+        use: ["style-loader", "css-loader"],
+      },
     ],
   },
   devServer: {
@@ -32,8 +36,17 @@ var config = {
     compress: true,
     open: true,
     port: 9000,
+    historyApiFallback: true
   },
-  plugins: [new webpack.DefinePlugin({ "process.env": JSON.stringify(dotenv.parsed) })],
+  plugins: [
+    new webpack.DefinePlugin({ "process.env": JSON.stringify(dotenv.parsed) }),
+  ],
+  resolve: {
+    modules: [
+      path.resolve(__dirname, "node_modules"),
+      path.resolve(__dirname, "./src"),
+    ],
+  },
 };
 
 module.exports = config;
