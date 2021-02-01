@@ -21,7 +21,6 @@ export function Pagination(props) {
             <PaginationNumber
               handleChange={props.handleChange}
               key={number}
-              default={number == 1}
               number={number}
               currentNumber={props.currentPage}
               groupName="pagination"

@@ -15,8 +15,7 @@ export function PaginationNumber(props) {
             className="btn-check"
             name={props.groupName}
             id={idField}
-            onClick={handleClick}
-            defaultChecked={props.default}
+            onChange={handleClick}
             checked={props.number == props.currentNumber}
         />
         <label className="btn btn-outline-primary" htmlFor={idField}>
