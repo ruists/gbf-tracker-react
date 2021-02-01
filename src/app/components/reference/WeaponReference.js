@@ -174,7 +174,12 @@ export class WeaponReference extends React.Component {
     return (
       <div className="container mt-4">
         <Title text="Weapons" />
-        <WeaponInfo show={this.state.show} />
+        <WeaponInfo
+          show={this.state.show}
+          handleClose={this.hideModal}
+          weapon={this.state.selectedWeapon}
+          id="infoModal"
+        />
         <div className="row col-lg-6 searchField mx-auto">
           <SearchField onChange={this.onSearchChange} placeholder="Search" />
         </div>
@@ -201,6 +206,7 @@ export class WeaponReference extends React.Component {
               key={index}
               item={weapon}
               handleClick={this.showModal}
+              modalTarget="#infoModal"
             />
           ))}
         </div>
@@ -208,7 +214,7 @@ export class WeaponReference extends React.Component {
           <Pagination
             handleChange={this.onPaginationChange}
             pageMax={this.pageMax}
-            currentPage={this.pageNumber+1}
+            currentPage={this.pageNumber + 1}
           />
         </div>
       </div>
@@ -219,5 +225,5 @@ export class WeaponReference extends React.Component {
 WeaponReference.propTypes = {
   rarities: PropTypes.array,
   elements: PropTypes.array,
-  weaponTypes: PropTypes.array
+  weaponTypes: PropTypes.array,
 };
