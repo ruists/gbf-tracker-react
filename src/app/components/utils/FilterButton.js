@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 export function FilterButton(props) {
   const handleClick = () => {
@@ -27,3 +28,10 @@ export function FilterButton(props) {
     </React.Fragment>
   );
 }
+
+FilterButton.propTypes = {
+  groupName: PropTypes.string,
+  itemName: PropTypes.string,
+  default: PropTypes.bool,
+  handleChange: PropTypes.func
+};

@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "app/styles/reference.css";
 
 export function ImageButton(props) {
@@ -23,3 +24,9 @@ export function ImageButton(props) {
     </React.Fragment>
   );
 }
+
+ImageButton.propTypes = {
+  item: PropTypes.object,
+  handleClick: PropTypes.func,
+  modalTarget: PropTypes.string
+};

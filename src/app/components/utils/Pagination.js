@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { PaginationNumber } from "./PaginationNumber";
 import "app/styles/reference.css";
 
@@ -33,3 +34,9 @@ export function Pagination(props) {
     </React.Fragment>
   );
 }
+
+Pagination.propTypes = {
+  currentPage: PropTypes.number,
+  pageMax: PropTypes.number,
+  handleChange: PropTypes.func
+};

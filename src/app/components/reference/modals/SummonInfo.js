@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import "app/styles/reference.css";
 
 export function SummonInfo(props) {
@@ -59,3 +60,10 @@ export function SummonInfo(props) {
     </div>
   );
 }
+
+SummonInfo.propTypes = {
+  show: PropTypes.bool,
+  handleClose: PropTypes.func,
+  id: PropTypes.string,
+  summon: PropTypes.object
+};

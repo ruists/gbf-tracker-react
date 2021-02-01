@@ -1,5 +1,6 @@
 import React from "react";
 import SearchField from "react-search-field";
+import PropTypes from "prop-types";
 import { WeaponInfo } from "./modals/WeaponInfo";
 import { Title } from "../utils/Title";
 import { FilterButtonGroup } from "../utils/FilterButtonGroup";
@@ -214,3 +215,9 @@ export class WeaponReference extends React.Component {
     );
   }
 }
+
+WeaponReference.propTypes = {
+  rarities: PropTypes.array,
+  elements: PropTypes.array,
+  weaponTypes: PropTypes.array
+};

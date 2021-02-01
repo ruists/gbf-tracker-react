@@ -1,5 +1,6 @@
 import React from "react";
 import SearchField from "react-search-field";
+import PropTypes from "prop-types";
 import { SummonInfo } from "./modals/SummonInfo";
 import { Title } from "../utils/Title";
 import { FilterButtonGroup } from "../utils/FilterButtonGroup";
@@ -198,3 +199,8 @@ export class SummonReference extends React.Component {
     );
   }
 }
+
+SummonReference.propTypes = {
+  rarities: PropTypes.array,
+  elements: PropTypes.array
+};

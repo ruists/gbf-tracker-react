@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 import { FilterButton } from "./FilterButton";
 import { capitalize } from "app/utils/utils.js";
 import "app/styles/reference.css";
@@ -30,3 +31,9 @@ export function FilterButtonGroup(props) {
     </div>
   );
 }
+
+FilterButtonGroup.propTypes = {
+  items: PropTypes.array,
+  name: PropTypes.string,
+  handleChange: PropTypes.func
+};

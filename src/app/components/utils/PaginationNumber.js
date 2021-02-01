@@ -1,4 +1,5 @@
 import React from "react";
+import PropTypes from "prop-types";
 
 export function PaginationNumber(props) {
   const handleClick = () => {
@@ -24,3 +25,11 @@ export function PaginationNumber(props) {
       </React.Fragment>
   );
 }
+
+PaginationNumber.propTypes = {
+  handleChange: PropTypes.func,
+  default: PropTypes.bool,
+  number: PropTypes.number,
+  currentNumber: PropTypes.number,
+  groupName: PropTypes.string
+};
