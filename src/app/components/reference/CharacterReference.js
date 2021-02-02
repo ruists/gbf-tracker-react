@@ -24,7 +24,7 @@ export class CharacterReference extends React.Component {
       rarity: "",
       element: "",
       race: "",
-      weaponType: ""
+      weaponType: "",
     };
 
     this.pageElements = 120;
@@ -68,21 +68,25 @@ export class CharacterReference extends React.Component {
     if (this.filter.weaponType) {
       filter = this.filter.weaponType.toLowerCase();
       filteredData = newData.filter((character) => {
-        return character.weaponType.name.toLowerCase() == filter;
+        return character.weaponType.some((type) => {
+          return type.name.toLowerCase() == filter;
+        });
       });
       newData = filteredData;
     }
     if (this.filter.style) {
       filter = this.filter.style.toLowerCase();
       filteredData = newData.filter((character) => {
-        return character.style.name.toLowerCase == filter;
+        return character.style.name.toLowerCase() == filter;
       });
       newData = filteredData;
     }
     if (this.filter.race) {
       filter = this.filter.race.toLowerCase();
       filteredData = newData.filter((character) => {
-        return character.race.name.toLowerCase == filter;
+        return character.race.some((race) => {
+          return race.name.toLowerCase() == filter;
+        });
       });
       newData = filteredData;
     }
