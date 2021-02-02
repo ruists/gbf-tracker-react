@@ -15,3 +15,7 @@ export function sortAlphabetically(a, b) {
 export function removeNeutralRarity(arr) {
   return arr.filter(item => item.name != "N");
 }
+
+export function removeAnyElement(arr) {
+  return arr.filter(item => item.name != "Any");
+}

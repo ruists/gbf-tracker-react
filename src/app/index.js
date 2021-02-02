@@ -4,7 +4,8 @@ import { Header } from "./components/Header";
 import { SummonReference } from "./components/reference/SummonReference";
 import { WeaponReference } from "./components/reference/WeaponReference";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { sortAlphabetically, removeNeutralRarity } from "./utils/utils";
+import { sortAlphabetically, removeNeutralRarity, removeAnyElement } from "./utils/utils";
+import { CharacterReference } from "./components/reference/CharacterReference";
 
 class App extends React.Component {
   constructor(props) {
@@ -75,16 +76,22 @@ class App extends React.Component {
               <Route path="/refWeapon">
                 <WeaponReference
                   rarities={this.state.rarities}
-                  elements={this.state.elements}
+                  elements={removeAnyElement(this.state.elements)}
                   weaponTypes={this.state.weaponTypes}
                 />
               </Route>
               <Route path="/refCharacter">
-                <div></div>
+                <CharacterReference
+                  races={this.state.races}
+                  rarities={removeNeutralRarity(this.state.rarities)}
+                  elements={this.state.elements}
+                  weaponTypes={this.state.weaponTypes}
+                  styles={this.state.styles}
+                />
               </Route>
               <Route path="/refSummon">
                 <SummonReference
-                  elements={this.state.elements}
+                  elements={removeAnyElement(this.state.elements)}
                   rarities={this.state.rarities}
                 />
               </Route>

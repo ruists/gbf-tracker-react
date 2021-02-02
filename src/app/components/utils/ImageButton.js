@@ -7,7 +7,7 @@ export function ImageButton(props) {
     props.handleClick(props.item);
   };
   const modalUsage = props.modalTarget != undefined;
-  
+
   return (
     <React.Fragment>
       <div className="col-lg-1 col-md-2 col-sm-3 col-xs-4 row-grid row-grid-image">
@@ -28,5 +28,5 @@ export function ImageButton(props) {
 ImageButton.propTypes = {
   item: PropTypes.object,
   handleClick: PropTypes.func,
-  modalTarget: PropTypes.string
+  modalTarget: PropTypes.string,
 };
