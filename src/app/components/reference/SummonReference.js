@@ -14,13 +14,14 @@ export class SummonReference extends React.Component {
     this.state = {
       items: [],
       filteredItems: [],
-      filter: {
-        search: "",
-        rarity: "",
-        element: "",
-      },
       show: false,
       selectedSummon: undefined,
+    };
+
+    this.filter = {
+      search: "",
+      rarity: "",
+      element: "",
     };
 
     this.pageElements = 120;
@@ -40,22 +41,22 @@ export class SummonReference extends React.Component {
     let filteredData = [];
     let filter = "";
 
-    if (this.state.filter.search) {
-      filter = this.state.filter.search.toLowerCase();
+    if (this.filter.search) {
+      filter = this.filter.search.toLowerCase();
       filteredData = newData.filter((summon) => {
         return summon.name.toLowerCase().includes(filter);
       });
       newData = filteredData;
     }
-    if (this.state.filter.rarity) {
-      filter = this.state.filter.rarity.toLowerCase();
+    if (this.filter.rarity) {
+      filter = this.filter.rarity.toLowerCase();
       filteredData = newData.filter((summon) => {
         return summon.rarity.name.toLowerCase() == filter;
       });
       newData = filteredData;
     }
-    if (this.state.filter.element) {
-      filter = this.state.filter.element.toLowerCase();
+    if (this.filter.element) {
+      filter = this.filter.element.toLowerCase();
       filteredData = newData.filter((summon) => {
         return summon.element.name.toLowerCase() == filter;
       });
@@ -87,7 +88,7 @@ export class SummonReference extends React.Component {
     this.setState({ filteredItems: this.getMatchedData() });
   };
   onFilterChange = (filterName, value) => {
-    let changedFilter = this.state.filter;
+    let changedFilter = this.filter;
 
     //ignore clicks in filters currently selected
     if (filterName == "element") {
@@ -104,13 +105,11 @@ export class SummonReference extends React.Component {
       }
     }
 
-    this.setState({ filter: changedFilter });
+    this.filter = changedFilter;
     this.setState({ filteredItems: this.getMatchedData() });
   };
   onSearchChange = (value) => {
-    let changedFilter = this.state.filter;
-    changedFilter.search = value;
-    this.setState({ filter: changedFilter });
+    this.filter.search = value;
     this.setState({ filteredItems: this.getMatchedData() });
   };
   showModal = (summon) => {
@@ -137,20 +136,6 @@ export class SummonReference extends React.Component {
         });
       })
       .catch(console.log);
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    //avoid updating if any of the filter options are changed
-    //update components only when actual data or modal state changes
-    if (this.state.filter.search != nextState.filter.search) {
-      return false;
-    } else if (this.state.filter.rarity != nextState.filter.rarity) {
-      return false;
-    } else if (this.state.filter.element != nextState.filter.element) {
-      return false;
-    }
-
-    return true;
   }
 
   render() {
@@ -192,7 +177,7 @@ export class SummonReference extends React.Component {
           <Pagination
             handleChange={this.onPaginationChange}
             pageMax={this.pageMax}
-            currentPage={this.pageNumber+1}
+            currentPage={this.pageNumber + 1}
           />
         </div>
       </div>
@@ -202,5 +187,5 @@ export class SummonReference extends React.Component {
 
 SummonReference.propTypes = {
   rarities: PropTypes.array,
-  elements: PropTypes.array
+  elements: PropTypes.array,
 };

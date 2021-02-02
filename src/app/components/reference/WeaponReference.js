@@ -14,14 +14,15 @@ export class WeaponReference extends React.Component {
     this.state = {
       item: [],
       filteredItems: [],
-      filter: {
-        search: "",
-        rarity: "",
-        element: "",
-        weaponType: "",
-      },
       show: false,
       selectedWeapon: undefined,
+    };
+
+    this.filter = {
+      search: "",
+      rarity: "",
+      element: "",
+      weaponType: "",
     };
 
     this.pageElements = 120;
@@ -41,29 +42,29 @@ export class WeaponReference extends React.Component {
     let filteredData = [];
     let filter = "";
 
-    if (this.state.filter.search) {
-      filter = this.state.filter.search.toLowerCase();
+    if (this.filter.search) {
+      filter = this.filter.search.toLowerCase();
       filteredData = newData.filter((weapon) => {
         return weapon.name.toLowerCase().includes(filter);
       });
       newData = filteredData;
     }
-    if (this.state.filter.rarity) {
-      filter = this.state.filter.rarity.toLowerCase();
+    if (this.filter.rarity) {
+      filter = this.filter.rarity.toLowerCase();
       filteredData = newData.filter((weapon) => {
         return weapon.rarity.name.toLowerCase() == filter;
       });
       newData = filteredData;
     }
-    if (this.state.filter.element) {
-      filter = this.state.filter.element.toLowerCase();
+    if (this.filter.element) {
+      filter = this.filter.element.toLowerCase();
       filteredData = newData.filter((weapon) => {
         return weapon.element.name.toLowerCase() == filter;
       });
       newData = filteredData;
     }
-    if (this.state.filter.weaponType) {
-      filter = this.state.filter.weaponType.toLowerCase();
+    if (this.filter.weaponType) {
+      filter = this.filter.weaponType.toLowerCase();
       filteredData = newData.filter((weapon) => {
         return weapon.weaponType.name.toLowerCase() == filter;
       });
@@ -95,8 +96,7 @@ export class WeaponReference extends React.Component {
     this.setState({ filteredItems: this.getMatchedData() });
   };
   onFilterChange = (filterName, value) => {
-    let changedFilter = this.state.filter;
-    console.log(filterName);
+    let changedFilter = this.filter;
 
     //ignore clicks in filters currently selected
     if (filterName == "element") {
@@ -119,13 +119,11 @@ export class WeaponReference extends React.Component {
       }
     }
 
-    this.setState({ filter: changedFilter });
+    this.filter = changedFilter;
     this.setState({ filteredItems: this.getMatchedData() });
   };
   onSearchChange = (value) => {
-    let changedFilter = this.state.filter;
-    changedFilter.search = value;
-    this.setState({ filter: changedFilter });
+    this.filter.search = value;
     this.setState({ filteredItems: this.getMatchedData() });
   };
   showModal = (weapon) => {
@@ -152,22 +150,6 @@ export class WeaponReference extends React.Component {
         });
       })
       .catch(console.log);
-  }
-
-  shouldComponentUpdate(nextProps, nextState) {
-    //avoid updating if any of the filter options are changed
-    //update components only when actual data or modal state changes
-    if (this.state.filter.search != nextState.filter.search) {
-      return false;
-    } else if (this.state.filter.rarity != nextState.filter.rarity) {
-      return false;
-    } else if (this.state.filter.element != nextState.filter.element) {
-      return false;
-    } else if (this.state.filter.weaponType != nextState.filter.weaponType) {
-      return false;
-    }
-
-    return true;
   }
 
   render() {
