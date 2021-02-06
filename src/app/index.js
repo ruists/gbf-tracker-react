@@ -4,8 +4,13 @@ import { Header } from "./components/Header";
 import { SummonReference } from "./components/reference/SummonReference";
 import { WeaponReference } from "./components/reference/WeaponReference";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { sortAlphabetically, removeNeutralRarity, removeAnyElement } from "./utils/utils";
+import {
+  sortAlphabetically,
+  removeNeutralRarity,
+  removeAnyElement,
+} from "./utils/utils";
 import { CharacterReference } from "./components/reference/CharacterReference";
+import { Register } from "./components/Authentication/Register";
 
 class App extends React.Component {
   constructor(props) {
@@ -16,8 +21,26 @@ class App extends React.Component {
       races: [],
       weaponTypes: [],
       styles: [],
+      isAuthenticated: false,
     };
   }
+
+  register = async (usr, pwd) => {
+    let data = { email: usr, password: pwd };
+    let loginUrl = process.env.REACT_APP_API + process.env.REACT_APP_API_SIGNUP;
+
+    let result = await fetch(loginUrl, {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify(data),
+    }).then((res) => {
+      return res.status;
+    }).catch(err => {
+      return -1;
+    });
+    return result;
+  };
+
   componentDidMount() {
     let elementUrl =
       process.env.REACT_APP_API + process.env.REACT_APP_API_ELEMENT;
@@ -71,8 +94,13 @@ class App extends React.Component {
       <div className="container-fluid">
         <Router>
           <div className="row">
-            <Header />
+            <Header isAuthenticated={this.state.isAuthenticated} />
             <Switch>
+              {!this.state.isAuthenticated && (
+                <Route path="/register">
+                  <Register handleRegistration={this.register} />
+                </Route>
+              )}
               <Route path="/refWeapon">
                 <WeaponReference
                   rarities={this.state.rarities}

@@ -36,17 +36,28 @@ export class Header extends React.Component {
                   aria-labelledby="referenceDropdown"
                 >
                   <li>
-                    <Link className="dropdown-item" to="/refCharacter">Characters</Link>
+                    <Link className="dropdown-item" to="/refCharacter">
+                      Characters
+                    </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/refWeapon">Weapons</Link>
+                    <Link className="dropdown-item" to="/refWeapon">
+                      Weapons
+                    </Link>
                   </li>
                   <li>
-                    <Link className="dropdown-item" to="/refSummon">Summons</Link>
+                    <Link className="dropdown-item" to="/refSummon">
+                      Summons
+                    </Link>
                   </li>
                 </ul>
               </li>
             </ul>
+            {!this.props.isAuthenticated && (
+              <Link className="nav-link text-muted" to="/register">
+                Register
+              </Link>
+            )}
           </div>
         </div>
       </nav>
