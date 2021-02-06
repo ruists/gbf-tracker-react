@@ -22,7 +22,7 @@ export function WeaponInfo(props) {
             <div className="modal-header">
               <img
                 src={props.weapon.imgUrl}
-                className="img-fuild mx-auto"
+                className="img-fluid mx-auto"
                 alt={props.weapon.name}
                 title={props.weapon.name}
               />
