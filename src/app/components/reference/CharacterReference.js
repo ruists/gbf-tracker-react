@@ -188,16 +188,16 @@ export class CharacterReference extends React.Component {
     return (
       <div className="container mt-4">
         <Title text="Characters" />
-        <CharacterInfo />
+        <CharacterInfo
+          show={this.state.show}
+          handleClose={this.hideModal}
+          character={this.state.selectedCharacter}
+          id="infoModal"
+        />
         <div className="row col-lg-6 searchField mx-auto">
           <SearchField onChange={this.onSearchChange} placeholder="Search" />
         </div>
         <div className="row col-lg-8 mx-auto">
-          <FilterButtonGroup
-            handleChange={this.onFilterChange}
-            name={"race"}
-            items={this.props.races}
-          />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
             name={"weaponType"}
@@ -205,13 +205,18 @@ export class CharacterReference extends React.Component {
           />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
-            name={"style"}
-            items={this.props.styles}
+            name={"element"}
+            items={this.props.elements}
           />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
-            name={"element"}
-            items={this.props.elements}
+            name={"race"}
+            items={this.props.races}
+          />
+          <FilterButtonGroup
+            handleChange={this.onFilterChange}
+            name={"style"}
+            items={this.props.styles}
           />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
