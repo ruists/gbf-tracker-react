@@ -21,8 +21,21 @@ var config = {
         include: SRC_DIR,
         loader: "babel-loader",
         options: {
-          presets: ["@babel/preset-env", "@babel/preset-react"],
-          plugins: ["@babel/plugin-proposal-class-properties"],
+          presets: [
+            [
+              "@babel/preset-env",
+              {
+                targets: {
+                  browsers: [">0.25%", "not ie 11", "not op_mini all"],
+                },
+              },
+            ],
+            "@babel/preset-react",
+          ],
+          plugins: [
+            "@babel/plugin-transform-runtime",
+            "@babel/plugin-proposal-class-properties",
+          ],
         },
       },
       {
@@ -36,7 +49,7 @@ var config = {
     compress: true,
     open: true,
     port: 9000,
-    historyApiFallback: true
+    historyApiFallback: true,
   },
   plugins: [
     new webpack.DefinePlugin({ "process.env": JSON.stringify(dotenv.parsed) }),
