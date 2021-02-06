@@ -24,6 +24,7 @@ export class SummonReference extends React.Component {
       element: "",
     };
 
+    //set initial paging values
     this.pageElements = 120;
     this.pageMax = 1;
     this.pageNumber = 0;
@@ -153,13 +154,13 @@ export class SummonReference extends React.Component {
         </div>
         <div className="row col-lg-8 mx-auto">
           <FilterButtonGroup
-            items={this.props.rarities}
-            name="rarity"
+            items={this.props.elements}
+            name="element"
             handleChange={this.onFilterChange}
           />
           <FilterButtonGroup
-            items={this.props.elements}
-            name="element"
+            items={this.props.rarities}
+            name="rarity"
             handleChange={this.onFilterChange}
           />
         </div>

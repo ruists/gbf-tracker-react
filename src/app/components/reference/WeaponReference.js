@@ -167,8 +167,8 @@ export class WeaponReference extends React.Component {
         </div>
         <div className="row col-lg-8 mx-auto">
           <FilterButtonGroup
-            items={this.props.rarities}
-            name="rarity"
+            items={this.props.weaponTypes}
+            name="weaponType"
             handleChange={this.onFilterChange}
           />
           <FilterButtonGroup
@@ -177,8 +177,8 @@ export class WeaponReference extends React.Component {
             handleChange={this.onFilterChange}
           />
           <FilterButtonGroup
-            items={this.props.weaponTypes}
-            name="weaponType"
+            items={this.props.rarities}
+            name="rarity"
             handleChange={this.onFilterChange}
           />
         </div>
