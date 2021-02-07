@@ -1,5 +1,6 @@
 import React from "react";
 import { render } from "react-dom";
+import { useHistory } from "react-router-dom";
 import { Header } from "./components/Header";
 import { SummonReference } from "./components/reference/SummonReference";
 import { WeaponReference } from "./components/reference/WeaponReference";
@@ -10,7 +11,8 @@ import {
   removeAnyElement,
 } from "./utils/utils";
 import { CharacterReference } from "./components/reference/CharacterReference";
-import { Register } from "./components/Authentication/Register";
+import { Register } from "./components/authentication/Register";
+import { authenticationService } from "./services/authentication.service";
 
 class App extends React.Component {
   constructor(props) {
@@ -21,24 +23,19 @@ class App extends React.Component {
       races: [],
       weaponTypes: [],
       styles: [],
-      isAuthenticated: false,
+      currentUser: null,
+      isAuthenticated: false
     };
   }
 
   register = async (usr, pwd) => {
-    let data = { email: usr, password: pwd };
-    let loginUrl = process.env.REACT_APP_API + process.env.REACT_APP_API_SIGNUP;
-
-    let result = await fetch(loginUrl, {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify(data),
-    }).then((res) => {
-      return res.status;
-    }).catch(err => {
-      return -1;
-    });
-    return result;
+    return authenticationService.register(usr, pwd);
+  };
+  login = async (usr, pwd) => {
+    return authenticationService.login(usr, pwd);
+  };
+  logout = () => {
+    authenticationService.logout();
   };
 
   componentDidMount() {
@@ -85,6 +82,10 @@ class App extends React.Component {
           weaponTypes: wTypeDataF,
           styles: styleDataF,
         });
+
+        authenticationService.currentUser.subscribe((x) =>
+          this.setState({ currentUser: x, isAuthenticated: x != null })
+        );
       })
       .catch(console.log);
   }
@@ -94,7 +95,11 @@ class App extends React.Component {
       <div className="container-fluid">
         <Router>
           <div className="row">
-            <Header isAuthenticated={this.state.isAuthenticated} />
+            <Header
+              isAuthenticated={this.state.isAuthenticated}
+              handleLogin={this.login}
+              handleLogout={this.logout}
+            />
             <Switch>
               {!this.state.isAuthenticated && (
                 <Route path="/register">

@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, { useState } from "react";
 import "app/styles/auth.css";
 import { useHistory } from "react-router-dom";
 
@@ -6,10 +6,10 @@ export function Register(props) {
   const history = useHistory();
   const [error, setError] = useState("");
 
-  async function submitInput(e) {
+  const submitInput = async (e) => {
     e.preventDefault();
-    const usr = document.getElementById("usernameControl").value;
-    const pwd = document.getElementById("passwordControl").value;
+    const usr = document.getElementById("usernameRegisterControl").value;
+    const pwd = document.getElementById("passwordRegisterControl").value;
     let result = await props.handleRegistration(usr, pwd);
     if (result === 201) {
       setError("");
@@ -19,7 +19,7 @@ export function Register(props) {
     } else {
       setError("An error occurred, try again later.");
     }
-  }
+  };
 
   return (
     <div className="text-center offset-md-3 col-md-6 mt-4 registration">
@@ -27,7 +27,7 @@ export function Register(props) {
       <form className="row" onSubmit={submitInput}>
         <div className="mb-3 row">
           <label
-            htmlFor="usernameControl"
+            htmlFor="usernameRegisterControl"
             className="form-label col-sm-2 col-form-label"
           >
             <b>Email</b>
@@ -36,14 +36,14 @@ export function Register(props) {
             <input
               type="email"
               className="form-control"
-              id="usernameControl"
+              id="usernameRegisterControl"
               required
             />
           </div>
         </div>
         <div className="mb-1 row">
           <label
-            htmlFor="passwordControl"
+            htmlFor="passwordRegisterControl"
             className="form-label col-sm-2 col-form-label"
           >
             <b>Password</b>
@@ -52,7 +52,7 @@ export function Register(props) {
             <input
               type="password"
               className="form-control"
-              id="passwordControl"
+              id="passwordRegisterControl"
               required
             />
           </div>
