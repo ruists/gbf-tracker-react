@@ -12,7 +12,7 @@ export async function authorizedFetch(method, url, body) {
   const body = {
     usr: userInfo.name,
     token: userInfo,
-    ...body
+    ...body,
   };
   const reqOptions = {
     method: method,
@@ -21,6 +21,11 @@ export async function authorizedFetch(method, url, body) {
   };
 
   const res = await fetch(url, reqOptions);
+  if (res.status === 401) {
+    authenticationService.logout();
+    //redirect to login
+    return 0;
+  }
   const result = await res.json();
   return { result: result, code: res.status };
 }
