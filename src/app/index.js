@@ -5,14 +5,14 @@ import { Header } from "./components/Header";
 import { SummonReference } from "./components/reference/SummonReference";
 import { WeaponReference } from "./components/reference/WeaponReference";
 import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { CharacterReference } from "./components/reference/CharacterReference";
+import { Register } from "./components/authentication/Register";
+import { authenticationService } from "./services/authentication.service";
 import {
   sortAlphabetically,
   removeNeutralRarity,
   removeAnyElement,
 } from "./utils/utils";
-import { CharacterReference } from "./components/reference/CharacterReference";
-import { Register } from "./components/authentication/Register";
-import { authenticationService } from "./services/authentication.service";
 
 class App extends React.Component {
   constructor(props) {
@@ -24,7 +24,7 @@ class App extends React.Component {
       weaponTypes: [],
       styles: [],
       currentUser: null,
-      isAuthenticated: false
+      isAuthenticated: false,
     };
   }
 
@@ -99,6 +99,7 @@ class App extends React.Component {
               isAuthenticated={this.state.isAuthenticated}
               handleLogin={this.login}
               handleLogout={this.logout}
+              userName={this.state.currentUser?.name}
             />
             <Switch>
               {!this.state.isAuthenticated && (

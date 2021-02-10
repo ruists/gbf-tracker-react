@@ -1,16 +1,8 @@
 import React from "react";
-import { Login } from "./authentication/Login";
+import { AuthenticationHeader } from "./authentication/AuthenticationHeader";
 import { Link } from "react-router-dom";
-import { useHistory } from "react-router-dom";
 
 export function Header(props) {
-  const history = useHistory();
-
-  const logout = () => {
-    props.handleLogout();
-    history.push("/");
-  }
-
   return (
     <nav className="navbar navbar-expand-lg navbar-dark bg-dark">
       <div className="container-fluid">
@@ -58,23 +50,12 @@ export function Header(props) {
               </ul>
             </li>
           </ul>
-          {!props.isAuthenticated && (
-            <React.Fragment>
-              <Login handleLogin={props.handleLogin} />
-              <Link className="btn btn-secondary" to="/register">
-                Register
-              </Link>
-            </React.Fragment>
-          )}
-          {props.isAuthenticated && (
-            <button
-              className="btn btn-secondary"
-              type="button"
-              onClick={logout}
-            >
-              Logout
-            </button>
-          )}
+          <AuthenticationHeader
+            handleLogin={props.handleLogin}
+            handleLogout={props.handleLogout}
+            userName={props.userName}
+            isAuthenticated={props.isAuthenticated}
+          />
         </div>
       </div>
     </nav>
