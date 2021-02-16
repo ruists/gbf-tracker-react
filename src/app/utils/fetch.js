@@ -8,7 +8,7 @@ export async function authorizedFetch(method, url, body) {
     return -1;
   }
 
-  const userInfo = authenticationService.currentUserValue();
+  const userInfo = authenticationService.currentUserValue;
   const body = {
     usr: userInfo.name,
     token: userInfo,
