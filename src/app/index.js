@@ -1,12 +1,13 @@
 import React from "react";
 import { render } from "react-dom";
-import { useHistory } from "react-router-dom";
+import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
+import { PrivateRoute } from "./utils/PrivateRoute";
 import { Header } from "./components/Header";
 import { SummonReference } from "./components/reference/SummonReference";
 import { WeaponReference } from "./components/reference/WeaponReference";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
 import { CharacterReference } from "./components/reference/CharacterReference";
 import { Register } from "./components/authentication/Register";
+import { NotAuthenticated } from "./components/error/NotAuthenticated";
 import { authenticationService } from "./services/authentication.service";
 import {
   sortAlphabetically,
@@ -129,6 +130,12 @@ class App extends React.Component {
                   rarities={this.state.rarities}
                 />
               </Route>
+              <Route path="/401">
+                <NotAuthenticated />
+              </Route>
+              <PrivateRoute path="/weapon"></PrivateRoute>
+              <PrivateRoute path="/character"></PrivateRoute>
+              <PrivateRoute path="/summon"></PrivateRoute>
             </Switch>
           </div>
         </Router>
