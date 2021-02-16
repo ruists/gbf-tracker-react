@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import "app/styles/auth.css";
 import { useHistory } from "react-router-dom";
 
-export function Login(props) {
+export function LoginHeader(props) {
   const history = useHistory();
   const [error, setError] = useState(false);
 

@@ -1,5 +1,5 @@
 import React from "react";
-import { Login } from "./Login";
+import { LoginHeader } from "./LoginHeader";
 import { Link, useHistory } from "react-router-dom";
 
 export function AuthenticationHeader(props) {
@@ -7,6 +7,7 @@ export function AuthenticationHeader(props) {
 
   const logout = () => {
     props.handleLogout();
+
     history.push("/");
   };
 
@@ -19,7 +20,7 @@ export function AuthenticationHeader(props) {
     </React.Fragment>
   ) : (
     <React.Fragment>
-      <Login handleLogin={props.handleLogin} />
+      <LoginHeader handleLogin={props.handleLogin} />
       <Link className="btn btn-secondary" to="/register">
         Register
       </Link>
