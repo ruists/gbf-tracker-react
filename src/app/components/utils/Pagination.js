@@ -8,34 +8,69 @@ export function Pagination(props) {
     props.pageMax <= 1
       ? [1]
       : [...Array(props.pageMax).keys()].map((val) => val + 1);
+  let prevDisabled = props.currentPage == 1;
+  let nextDisabled = props.currentPage == props.pageMax;
+  let prevClassName = prevDisabled ? "page-item disabled" : "page-item";
+  let nextClassName = nextDisabled ? "page-item disabled" : "page-item";
+
+  const handlePrev = (event) => {
+    event.preventDefault();
+
+    if (prevDisabled) {
+      return;
+    }
+    props.handleChange(props.currentPage - 2);
+  };
+
+  const handleNext = (event) => {
+    event.preventDefault();
+
+    if (nextDisabled) {
+      return;
+    }
+    props.handleChange(props.currentPage);
+  };
 
   return (
-    <React.Fragment>
+    <nav aria-label="Data Pagination">
       {props.pageMax > 1 ? (
-        <div
-          className="btn-group filter-button-group"
-          role="group"
-          aria-label="pagination"
-        >
+        <ul className="pagination pagination-lg justify-content-center">
+          <li className={prevClassName}>
+            {prevDisabled ? (
+              <span className="page-link">Previous</span>
+            ) : (
+              <a className="page-link" href="#!" onClick={handlePrev}>
+                Previous
+              </a>
+            )}
+          </li>
           {pageNumbers.map((number) => (
             <PaginationNumber
               handleChange={props.handleChange}
               key={number}
               number={number}
               currentNumber={props.currentPage}
-              groupName="pagination"
             />
           ))}
-        </div>
+          <li className={nextClassName}>
+            {nextDisabled ? (
+              <span className="page-link">Next</span>
+            ) : (
+              <a className="page-link" href="#!" onClick={handleNext}>
+                Next
+              </a>
+            )}
+          </li>
+        </ul>
       ) : (
         <div></div>
       )}
-    </React.Fragment>
+    </nav>
   );
 }
 
 Pagination.propTypes = {
   currentPage: PropTypes.number,
   pageMax: PropTypes.number,
-  handleChange: PropTypes.func
+  handleChange: PropTypes.func,
 };
