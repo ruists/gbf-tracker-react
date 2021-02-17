@@ -18,20 +18,20 @@ export function Header(props) {
         >
           <span className="navbar-toggler-icon"></span>
         </button>
-        <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav me-auto mb-2 mb-lg-0 col-md-2 offset-md-1">
+        <div className="collapse navbar-collapse " id="navbarSupportedContent">
+          <ul className="off-set-md-1 navbar-nav me-auto ms-3">
             <li className="nav-item dropdown">
               <a
                 className="nav-link dropdown-toggle"
-                id="referenceDropdown"
+                href="#"
+                id="refDropdown"
                 role="button"
                 data-bs-toggle="dropdown"
                 aria-expanded="false"
-                href="#"
               >
                 Reference
               </a>
-              <ul className="dropdown-menu" aria-labelledby="referenceDropdown">
+              <ul className="dropdown-menu" aria-labelledby="refDropdown">
                 <li>
                   <Link className="dropdown-item" to="/refCharacter">
                     Characters
@@ -49,13 +49,46 @@ export function Header(props) {
                 </li>
               </ul>
             </li>
+            {props.isAuthenticated && (
+              <li className="nav-item dropdown">
+                <a
+                  className="nav-link dropdown-toggle"
+                  href="#"
+                  id="invDropdown"
+                  role="button"
+                  data-bs-toggle="dropdown"
+                  aria-expanded="false"
+                >
+                  Inventory
+                </a>
+                <ul className="dropdown-menu" aria-labelledby="invDropdown">
+                  <li>
+                    <Link className="dropdown-item" to="/character">
+                      Characters
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/weapon">
+                      Weapons
+                    </Link>
+                  </li>
+                  <li>
+                    <Link className="dropdown-item" to="/summon">
+                      Summons
+                    </Link>
+                  </li>
+                </ul>
+              </li>
+            )}
           </ul>
-          <AuthenticationHeader
-            handleLogin={props.handleLogin}
-            handleLogout={props.handleLogout}
-            userName={props.userName}
-            isAuthenticated={props.isAuthenticated}
-          />
+          <div className="d-flex justify-content-end">
+            <AuthenticationHeader
+              handleLogin={props.handleLogin}
+              handleLogout={props.handleLogout}
+              userName={props.userName}
+              isAuthenticated={props.isAuthenticated}
+            />
+          </div>
         </div>
       </div>
     </nav>
