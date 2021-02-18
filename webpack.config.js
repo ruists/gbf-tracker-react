@@ -3,6 +3,7 @@ const webpack = require("webpack");
 const dotenv = require("dotenv").config({
   path: path.join(__dirname, ".env"),
 });
+const HtmlWebpackPlugin = require("html-webpack-plugin");
 
 var DIST_DIR = path.resolve(__dirname, "dist");
 var SRC_DIR = path.resolve(__dirname, "src");
@@ -53,6 +54,11 @@ var config = {
   },
   plugins: [
     new webpack.DefinePlugin({ "process.env": JSON.stringify(dotenv.parsed) }),
+    new HtmlWebpackPlugin({
+      favicon: "./src/favicon.ico",
+      template: "./src/index.html",
+      filename: "../index.html",
+    }),
   ],
   resolve: {
     modules: [
