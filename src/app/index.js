@@ -14,6 +14,7 @@ import {
   removeNeutralRarity,
   removeAnyElement,
 } from "./utils/utils";
+import "app/styles/general.css";
 
 class App extends React.Component {
   constructor(props) {
@@ -26,7 +27,10 @@ class App extends React.Component {
       styles: [],
       currentUser: null,
       isAuthenticated: false,
+      loading: true,
     };
+
+    let userSubscription = null;
   }
 
   register = async (usr, pwd) => {
@@ -82,13 +86,18 @@ class App extends React.Component {
           races: raceDataF,
           weaponTypes: wTypeDataF,
           styles: styleDataF,
+          loading: false,
         });
 
-        authenticationService.currentUser.subscribe((x) =>
-          this.setState({ currentUser: x, isAuthenticated: x != null })
+        this.userSubscription = authenticationService.currentUser.subscribe(
+          (x) => this.setState({ currentUser: x, isAuthenticated: x != null })
         );
       })
       .catch(console.log);
+  }
+
+  componentWillUnmount() {
+    this.userSubscription?.unsubscribe();
   }
 
   render() {
@@ -102,41 +111,52 @@ class App extends React.Component {
               handleLogout={this.logout}
               userName={this.state.currentUser?.name}
             />
-            <Switch>
-              {!this.state.isAuthenticated && (
-                <Route path="/register">
-                  <Register handleRegistration={this.register} />
+            {this.state.loading ? (
+              <div className="d-flex justify-content-center">
+                <div
+                  className="spinner-border loadingSpinner align-middle"
+                  role="status"
+                >
+                  <span className="visually-hidden">Loading...</span>
+                </div>
+              </div>
+            ) : (
+              <Switch>
+                {!this.state.isAuthenticated && (
+                  <Route path="/register">
+                    <Register handleRegistration={this.register} />
+                  </Route>
+                )}
+                <Route path="/refWeapon">
+                  <WeaponReference
+                    rarities={this.state.rarities}
+                    elements={removeAnyElement(this.state.elements)}
+                    weaponTypes={this.state.weaponTypes}
+                  />
                 </Route>
-              )}
-              <Route path="/refWeapon">
-                <WeaponReference
-                  rarities={this.state.rarities}
-                  elements={removeAnyElement(this.state.elements)}
-                  weaponTypes={this.state.weaponTypes}
-                />
-              </Route>
-              <Route path="/refCharacter">
-                <CharacterReference
-                  races={this.state.races}
-                  rarities={removeNeutralRarity(this.state.rarities)}
-                  elements={this.state.elements}
-                  weaponTypes={this.state.weaponTypes}
-                  styles={this.state.styles}
-                />
-              </Route>
-              <Route path="/refSummon">
-                <SummonReference
-                  elements={removeAnyElement(this.state.elements)}
-                  rarities={this.state.rarities}
-                />
-              </Route>
-              <Route path="/401">
-                <NotAuthenticated />
-              </Route>
-              <PrivateRoute path="/weapon"></PrivateRoute>
-              <PrivateRoute path="/character"></PrivateRoute>
-              <PrivateRoute path="/summon"></PrivateRoute>
-            </Switch>
+                <Route path="/refCharacter">
+                  <CharacterReference
+                    races={this.state.races}
+                    rarities={removeNeutralRarity(this.state.rarities)}
+                    elements={this.state.elements}
+                    weaponTypes={this.state.weaponTypes}
+                    styles={this.state.styles}
+                  />
+                </Route>
+                <Route path="/refSummon">
+                  <SummonReference
+                    elements={removeAnyElement(this.state.elements)}
+                    rarities={this.state.rarities}
+                  />
+                </Route>
+                <Route path="/401">
+                  <NotAuthenticated />
+                </Route>
+                <PrivateRoute path="/weapon"></PrivateRoute>
+                <PrivateRoute path="/character"></PrivateRoute>
+                <PrivateRoute path="/summon"></PrivateRoute>
+              </Switch>
+            )}
           </div>
         </Router>
       </div>

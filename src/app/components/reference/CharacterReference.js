@@ -6,6 +6,7 @@ import { CharacterInfo } from "./modals/CharacterInfo";
 import { FilterButtonGroup } from "../utils/FilterButtonGroup";
 import { ImageButton } from "../utils/ImageButton";
 import { Pagination } from "../utils/Pagination";
+import "app/styles/general.css";
 import "app/styles/reference.css";
 
 export class CharacterReference extends React.Component {
@@ -17,6 +18,7 @@ export class CharacterReference extends React.Component {
       filteredItems: [],
       show: false,
       selectedCharacter: undefined,
+      loading: true,
     };
 
     this.filter = {
@@ -115,6 +117,7 @@ export class CharacterReference extends React.Component {
     this.pageNumber = value;
     this.setState({ filteredItems: this.getMatchedData() });
   };
+
   onFilterChange = (filterName, value) => {
     let changedFilter = this.filter;
 
@@ -179,12 +182,22 @@ export class CharacterReference extends React.Component {
         this.setState({
           items: charaDataF,
           filteredItems: charaDataF.slice(0, this.pageElements),
+          loading: false,
         });
       })
       .catch(console.log);
   }
 
   render() {
+    if (this.state.loading) {
+      return (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border loadingSpinner" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="container mt-4">
         <Title text="Characters" />

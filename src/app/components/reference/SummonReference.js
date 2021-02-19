@@ -6,6 +6,7 @@ import { Title } from "../utils/Title";
 import { FilterButtonGroup } from "../utils/FilterButtonGroup";
 import { ImageButton } from "../utils/ImageButton";
 import { Pagination } from "../utils/Pagination";
+import "app/styles/general.css";
 import "app/styles/reference.css";
 
 export class SummonReference extends React.Component {
@@ -16,6 +17,7 @@ export class SummonReference extends React.Component {
       filteredItems: [],
       show: false,
       selectedSummon: undefined,
+      loading: true,
     };
 
     this.filter = {
@@ -134,12 +136,22 @@ export class SummonReference extends React.Component {
         this.setState({
           items: summonDataF,
           filteredItems: summonDataF.slice(0, this.pageElements),
+          loading: false,
         });
       })
       .catch(console.log);
   }
 
   render() {
+    if (this.state.loading) {
+      return (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border loadingSpinner" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="container mt-4">
         <Title text="Summons" />

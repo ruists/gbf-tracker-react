@@ -7,6 +7,7 @@ import { FilterButtonGroup } from "../utils/FilterButtonGroup";
 import { ImageButton } from "../utils/ImageButton";
 import { Pagination } from "../utils/Pagination";
 import "app/styles/reference.css";
+import "app/styles/general.css";
 
 export class WeaponReference extends React.Component {
   constructor(props) {
@@ -16,6 +17,7 @@ export class WeaponReference extends React.Component {
       filteredItems: [],
       show: false,
       selectedWeapon: undefined,
+      loading: true,
     };
 
     this.filter = {
@@ -147,12 +149,22 @@ export class WeaponReference extends React.Component {
         this.setState({
           items: weaponDataF,
           filteredItems: weaponDataF.slice(0, this.pageElements),
+          loading: false,
         });
       })
       .catch(console.log);
   }
 
   render() {
+    if (this.state.loading) {
+      return (
+        <div className="d-flex justify-content-center">
+          <div className="spinner-border loadingSpinner" role="status">
+            <span className="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      );
+    }
     return (
       <div className="container mt-4">
         <Title text="Weapons" />
