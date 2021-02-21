@@ -89,7 +89,7 @@ class App extends React.Component {
           loading: false,
         });
 
-        this.userSubscription = authenticationService.currentUser.subscribe(
+        userSubscription = this.userSubscription = authenticationService.currentUser.subscribe(
           (x) => this.setState({ currentUser: x, isAuthenticated: x != null })
         );
       })
