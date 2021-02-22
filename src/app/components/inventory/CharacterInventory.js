@@ -3,6 +3,7 @@ import PropTypes from "prop-types";
 import { Title } from "../utils/Title";
 import { FilterButtonGroup } from "../utils/FilterButtonGroup";
 import { ImageButton } from "../utils/ImageButton";
+import { CharacterInfo } from "./modals/CharacterInfo";
 import { Pagination } from "../utils/Pagination";
 
 export class CharacterInventory extends React.Component {
@@ -30,6 +31,8 @@ export class CharacterInventory extends React.Component {
     this.pageNumber = 0;
     this.pageChanged = false;
 
+    this.showModal = this.showModal.bind(this);
+    this.hideModal = this.hideModal.bind(this);
     this.onSearchChange = this.onSearchChange.bind(this);
     this.onFilterChange = this.onFilterChange.bind(this);
     this.onPaginationChange = this.onPaginationChange.bind(this);
@@ -156,6 +159,12 @@ export class CharacterInventory extends React.Component {
     this.filter.search = value;
     this.setState({ filteredItems: this.getMatchedData() });
   };
+  showModal = (character) => {
+    this.setState({ show: true, selectedCharacter: character });
+  };
+  hideModal = () => {
+    this.setState({ show: false });
+  };
 
   componentDidMount() {
     const invUrl =
@@ -187,12 +196,26 @@ export class CharacterInventory extends React.Component {
 
   render() {
     if (this.state.items.length === 0) {
-      return <div></div>;
+      return (
+        <div className="container-fluid mt-5 offset-md-3 lh-1">
+          <div className="row col-md-6">
+            <h1 className="text-start fw-bold">
+              You don't have any registered character yet.
+            </h1>
+          </div>
+        </div>
+      );
     }
 
     return (
       <div className="container mt-4">
         <Title text="Characters" />
+        <CharacterInfo
+          show={this.state.show}
+          handleClose={this.hideModal}
+          character={this.state.selectedCharacter}
+          id="infoModal"
+        />
         <div className="row col-lg-6 searchField mx-auto">
           <SearchField onChange={this.onSearchChange} placeholder="Search" />
         </div>
@@ -222,6 +245,17 @@ export class CharacterInventory extends React.Component {
             name={"rarity"}
             items={this.props.rarities}
           />
+        </div>
+        <div className="row mt-3">
+          {this.state.filteredItems.map((character, index) => (
+            <ImageButton
+              key={index}
+              item={character}
+              itemData={character.baseCharacter}
+              handleClick={this.showModal}
+              modalTarget="#infoModal"
+            />
+          ))}
         </div>
       </div>
     );

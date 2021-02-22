@@ -24,20 +24,24 @@ export function LoginHeader(props) {
   return (
     <div className="me-3">
       <form className="d-flex" onSubmit={submitLoginInput} id="loginForm">
-        <input
-          className="form-control me-2"
-          id="usernameLoginControl"
-          type="email"
-          placeholder="E-mail"
-          aria-label="E-mail"
-        />
-        <input
-          className="form-control me-2"
-          id="passwordLoginControl"
-          type="password"
-          placeholder="Password"
-          aria-label="Password"
-        />
+        <div className="form-floating">
+          <input
+            className="form-control me-2"
+            id="usernameLoginControl"
+            type="email"
+            aria-label="E-mail"
+          />
+          <label for="usernameLoginControl">Email</label>
+        </div>
+        <div className="form-floating">
+          <input
+            className="form-control me-2"
+            id="passwordLoginControl"
+            type="password"
+            aria-label="Password"
+          />
+          <label for="passwordLoginControl">Password</label>
+        </div>
         <button className="btn btn-secondary" type="submit">
           Login
         </button>
