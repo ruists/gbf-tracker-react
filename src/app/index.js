@@ -1,59 +1,57 @@
-import React from "react";
-import { render } from "react-dom";
-import { BrowserRouter as Router, Switch, Route, Link } from "react-router-dom";
-import { PrivateRoute } from "./utils/PrivateRoute";
-import { Header } from "./components/Header";
-import { SummonReference } from "./components/reference/SummonReference";
-import { WeaponReference } from "./components/reference/WeaponReference";
-import { CharacterReference } from "./components/reference/CharacterReference";
-import { Register } from "./components/authentication/Register";
-import { NotAuthenticated } from "./components/error/NotAuthenticated";
-import { authenticationService } from "./services/authentication.service";
+import React, { useEffect, useState } from 'react'
+import { render } from 'react-dom'
+import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { PrivateRoute } from './utils/PrivateRoute'
+import { Header } from './components/Header'
+import { SummonReference } from './components/reference/SummonReference'
+import { WeaponReference } from './components/reference/WeaponReference'
+import { CharacterReference } from './components/reference/CharacterReference'
+import { Register } from './components/authentication/Register'
+import { NotAuthenticated } from './components/error/NotAuthenticated'
+import { authenticationService } from './services/authentication.service'
 import {
   sortAlphabetically,
   removeNeutralRarity,
   removeAnyElement,
-} from "./utils/utils";
-import "app/styles/general.css";
+} from './utils/utils'
+import 'app/styles/general.css'
 
-class App extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      elements: [],
-      rarities: [],
-      races: [],
-      weaponTypes: [],
-      styles: [],
-      currentUser: null,
-      isAuthenticated: false,
-      loading: true,
-    };
+async function register(usr, pwd) {
+  return authenticationService.register(usr, pwd)
+}
+async function login(usr, pwd) {
+  return authenticationService.login(usr, pwd)
+}
+function logout() {
+  authenticationService.logout()
+}
 
-    let userSubscription = null;
-  }
+function App() {
+  const [loading, setLoading] = useState(true)
+  const [auth, setAuth] = useState({
+    isAuthenticated: false,
+    currentUser: null,
+  })
+  const [data, setData] = useState({
+    elements: [],
+    rarities: [],
+    races: [],
+    weaponTypes: [],
+    styles: [],
+  })
 
-  register = async (usr, pwd) => {
-    return authenticationService.register(usr, pwd);
-  };
-  login = async (usr, pwd) => {
-    return authenticationService.login(usr, pwd);
-  };
-  logout = () => {
-    authenticationService.logout();
-  };
+  let userSubscription = null
 
-  componentDidMount() {
+  //fetch data needed throughout the app
+  useEffect(() => {
     let elementUrl =
-      process.env.REACT_APP_API + process.env.REACT_APP_API_ELEMENT;
-    let rarityUrl =
-      process.env.REACT_APP_API + process.env.REACT_APP_API_RARITY;
-    let raceUrl = process.env.REACT_APP_API + process.env.REACT_APP_API_RACE;
+      process.env.REACT_APP_API + process.env.REACT_APP_API_ELEMENT
+    let rarityUrl = process.env.REACT_APP_API + process.env.REACT_APP_API_RARITY
+    let raceUrl = process.env.REACT_APP_API + process.env.REACT_APP_API_RACE
     let wtypeUrl =
-      process.env.REACT_APP_API + process.env.REACT_APP_API_WEAPONTYPE;
-    let styleUrl = process.env.REACT_APP_API + process.env.REACT_APP_API_STYLE;
+      process.env.REACT_APP_API + process.env.REACT_APP_API_WEAPONTYPE
+    let styleUrl = process.env.REACT_APP_API + process.env.REACT_APP_API_STYLE
 
-    //GET basic data for use throughout the app
     Promise.all([
       fetch(elementUrl).then((res) => res.json()),
       fetch(rarityUrl).then((res) => res.json()),
@@ -63,105 +61,100 @@ class App extends React.Component {
     ])
       .then(([elementData, rarityData, raceData, wTypeData, styleData]) => {
         let elementDataF = elementData.elements.map((item) => {
-          return item.element;
-        });
+          return item.element
+        })
         let rarityDataF = rarityData.rarities.map((item) => {
-          return item.rarity;
-        });
+          return item.rarity
+        })
         let raceDataF = raceData.races.map((item) => {
-          return item.race;
-        });
+          return item.race
+        })
         let wTypeDataF = wTypeData.weaponTypes.map((item) => {
-          return item.weaponType;
-        });
+          return item.weaponType
+        })
         let styleDataF = styleData.styles.map((item) => {
-          return item.style;
-        });
+          return item.style
+        })
 
-        rarityDataF.sort(sortAlphabetically);
+        rarityDataF.sort(sortAlphabetically)
 
-        this.setState({
+        setData({
           elements: elementDataF,
           rarities: rarityDataF,
           races: raceDataF,
           weaponTypes: wTypeDataF,
           styles: styleDataF,
-          loading: false,
-        });
+        })
+        setLoading(false)
 
-        userSubscription = this.userSubscription = authenticationService.currentUser.subscribe(
-          (x) => this.setState({ currentUser: x, isAuthenticated: x != null })
-        );
+        userSubscription = authenticationService.currentUser.subscribe((x) =>
+          setAuth({ currentUser: x, isAuthenticated: x != null })
+        )
+        return () => userSubscription?.unsubscribe()
       })
-      .catch(console.log);
-  }
+      .catch(console.log)
+  }, [])
 
-  componentWillUnmount() {
-    this.userSubscription?.unsubscribe();
-  }
-
-  render() {
-    return (
-      <div className="container-fluid">
-        <Router>
-          <div className="row">
-            <Header
-              isAuthenticated={this.state.isAuthenticated}
-              handleLogin={this.login}
-              handleLogout={this.logout}
-              userName={this.state.currentUser?.name}
-            />
-            {this.state.loading ? (
-              <div className="d-flex justify-content-center">
-                <div
-                  className="spinner-border loadingSpinner align-middle"
-                  role="status"
-                >
-                  <span className="visually-hidden">Loading...</span>
-                </div>
+  return (
+    <div className='container-fluid'>
+      <Router>
+        <div className='row'>
+          <Header
+            isAuthenticated={auth.isAuthenticated}
+            handleLogin={login}
+            handleLogout={logout}
+            userName={auth.currentUser?.name}
+          />
+          {auth.loading ? (
+            <div className='d-flex justify-content-center'>
+              <div
+                className='spinner-border loadingSpinner align-middle'
+                role='status'
+              >
+                <span className='visually-hidden'>Loading...</span>
               </div>
-            ) : (
-              <Switch>
-                {!this.state.isAuthenticated && (
-                  <Route path="/register">
-                    <Register handleRegistration={this.register} />
-                  </Route>
-                )}
-                <Route path="/refWeapon">
-                  <WeaponReference
-                    rarities={this.state.rarities}
-                    elements={removeAnyElement(this.state.elements)}
-                    weaponTypes={this.state.weaponTypes}
-                  />
+            </div>
+          ) : (
+            <Switch>
+              {!auth.isAuthenticated && (
+                <Route path='/register'>
+                  <Register handleRegistration={register} />
                 </Route>
-                <Route path="/refCharacter">
-                  <CharacterReference
-                    races={this.state.races}
-                    rarities={removeNeutralRarity(this.state.rarities)}
-                    elements={this.state.elements}
-                    weaponTypes={this.state.weaponTypes}
-                    styles={this.state.styles}
-                  />
-                </Route>
-                <Route path="/refSummon">
-                  <SummonReference
-                    elements={removeAnyElement(this.state.elements)}
-                    rarities={this.state.rarities}
-                  />
-                </Route>
-                <Route path="/401">
-                  <NotAuthenticated />
-                </Route>
-                <PrivateRoute path="/weapon"></PrivateRoute>
-                <PrivateRoute path="/character"></PrivateRoute>
-                <PrivateRoute path="/summon"></PrivateRoute>
-              </Switch>
-            )}
-          </div>
-        </Router>
-      </div>
-    );
-  }
+              )}
+              <Route path='/refWeapon'>
+                <WeaponReference
+                  rarities={data.rarities}
+                  elements={removeAnyElement(data.elements)}
+                  weaponTypes={data.weaponTypes}
+                />
+              </Route>
+              <Route path='/refCharacter'>
+                <CharacterReference
+                  races={data.races}
+                  rarities={removeNeutralRarity(data.rarities)}
+                  elements={data.elements}
+                  weaponTypes={data.weaponTypes}
+                  styles={data.styles}
+                />
+              </Route>
+              <Route path='/refSummon'>
+                <SummonReference
+                  elements={removeAnyElement(data.elements)}
+                  rarities={data.rarities}
+                />
+              </Route>
+              <Route path='/401'>
+                <NotAuthenticated />
+              </Route>
+              <PrivateRoute path='/weapon'></PrivateRoute>
+              <PrivateRoute path='/character'></PrivateRoute>
+              <PrivateRoute path='/summon'></PrivateRoute>
+            </Switch>
+          )}
+        </div>
+      </Router>
+    </div>
+  )
 }
 
-render(<App />, window.document.getElementById("app"));
+render(<App />, window.document.getElementById('app'))
