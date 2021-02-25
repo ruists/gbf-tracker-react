@@ -1,34 +1,34 @@
-import React from "react";
-import PropTypes from "prop-types";
+import React from 'react'
+import PropTypes from 'prop-types'
 
 export function PaginationNumber(props) {
   const handleClick = (event) => {
-    event.preventDefault();
+    event.preventDefault()
 
     if (props.number == props.currentNumber) {
-      return;
+      return
     }
-    props.handleChange(props.number - 1);
-  };
+    props.handleChange(props.number - 1)
+  }
 
-  let current = props.number == props.currentNumber;
+  let current = props.number == props.currentNumber
 
   return (
-    <li className={current ? "page-item active" : "page-item"}>
+    <li className={current ? 'page-item active' : 'page-item'}>
       {current ? (
-        <span className="page-link">{props.number}</span>
+        <span className='page-link'>{props.number}</span>
       ) : (
         <a
-          className="page-link"
-          href="#"
+          className='page-link'
+          href='#'
           onClick={handleClick}
-          aria-current="page"
+          aria-current='page'
         >
           {props.number}
         </a>
       )}
     </li>
-  );
+  )
 }
 
 PaginationNumber.propTypes = {
@@ -36,4 +36,4 @@ PaginationNumber.propTypes = {
   default: PropTypes.bool,
   number: PropTypes.number,
   currentNumber: PropTypes.number,
-};
+}

@@ -1,33 +1,33 @@
-import React from "react";
-import PropTypes from "prop-types";
-import "app/styles/reference.css";
+import React from 'react'
+import PropTypes from 'prop-types'
+import 'app/styles/reference.css'
 
 export function SummonInfo(props) {
   const showHideClassName = props.show
-    ? "modal fade display-block"
-    : "modal fade display-none";
-  let defined = props.summon != undefined;
+    ? 'modal fade display-block'
+    : 'modal fade display-none'
+  let defined = props.summon != undefined
 
   return (
     <div
       className={showHideClassName}
-      data-bs-backdrop="static"
-      data-bs-keyboard="false"
-      aria-hidden="true"
-      id={props.id ? props.id : ""}
+      data-bs-backdrop='static'
+      data-bs-keyboard='false'
+      aria-hidden='true'
+      id={props.id ? props.id : ''}
     >
-      <div className="modal-dialog modal-dialog-centered modal-sm text-center">
+      <div className='modal-dialog modal-dialog-centered modal-sm text-center'>
         {defined ? (
-          <div className="modal-content">
-            <div className="modal-header">
+          <div className='modal-content'>
+            <div className='modal-header'>
               <img
                 src={props.summon.imgUrl}
-                className="img-fluid mx-auto"
+                className='img-fluid mx-auto'
                 alt={props.summon.name}
                 title={props.summon.name}
               />
             </div>
-            <div className="modal-body">
+            <div className='modal-body'>
               <p>
                 <b>Name: </b>
                 {props.summon.name}
@@ -41,13 +41,13 @@ export function SummonInfo(props) {
                 {props.summon.rarity.name}
               </p>
             </div>
-            <div className="modal-footer">
+            <div className='modal-footer'>
               <button
-                type="button"
-                className="btn btn-secondary"
+                type='button'
+                className='btn btn-secondary'
                 onClick={props.handleClose}
-                data-bs-dismiss="modal"
-                aria-label="Close"
+                data-bs-dismiss='modal'
+                aria-label='Close'
               >
                 Close
               </button>
@@ -58,12 +58,12 @@ export function SummonInfo(props) {
         )}
       </div>
     </div>
-  );
+  )
 }
 
 SummonInfo.propTypes = {
   show: PropTypes.bool,
   handleClose: PropTypes.func,
   id: PropTypes.string,
-  summon: PropTypes.object
-};
+  summon: PropTypes.object,
+}

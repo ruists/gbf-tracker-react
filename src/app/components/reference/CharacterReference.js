@@ -1,17 +1,17 @@
-import React from "react";
-import SearchField from "react-search-field";
-import PropTypes from "prop-types";
-import { Title } from "../utils/Title";
-import { CharacterInfo } from "./modals/CharacterInfo";
-import { FilterButtonGroup } from "../utils/FilterButtonGroup";
-import { ImageButton } from "../utils/ImageButton";
-import { Pagination } from "../utils/Pagination";
-import "app/styles/general.css";
-import "app/styles/reference.css";
+import React from 'react'
+import SearchField from 'react-search-field'
+import PropTypes from 'prop-types'
+import { Title } from '../utils/Title'
+import { CharacterInfo } from './modals/CharacterInfo'
+import { FilterButtonGroup } from '../utils/FilterButtonGroup'
+import { ImageButton } from '../utils/ImageButton'
+import { Pagination } from '../utils/Pagination'
+import 'app/styles/general.css'
+import 'app/styles/reference.css'
 
 export class CharacterReference extends React.Component {
   constructor(props) {
-    super(props);
+    super(props)
 
     this.state = {
       items: [],
@@ -19,235 +19,235 @@ export class CharacterReference extends React.Component {
       show: false,
       selectedCharacter: undefined,
       loading: true,
-    };
+    }
 
     this.filter = {
-      search: "",
-      rarity: "",
-      element: "",
-      race: "",
-      weaponType: "",
-    };
+      search: '',
+      rarity: '',
+      element: '',
+      race: '',
+      weaponType: '',
+    }
 
-    this.pageElements = 120;
-    this.pageMax = 1;
-    this.pageNumber = 0;
-    this.pageChanged = false;
+    this.pageElements = 120
+    this.pageMax = 1
+    this.pageNumber = 0
+    this.pageChanged = false
 
-    this.showModal = this.showModal.bind(this);
-    this.hideModal = this.hideModal.bind(this);
-    this.onSearchChange = this.onSearchChange.bind(this);
-    this.onFilterChange = this.onFilterChange.bind(this);
-    this.onPaginationChange = this.onPaginationChange.bind(this);
+    this.showModal = this.showModal.bind(this)
+    this.hideModal = this.hideModal.bind(this)
+    this.onSearchChange = this.onSearchChange.bind(this)
+    this.onFilterChange = this.onFilterChange.bind(this)
+    this.onPaginationChange = this.onPaginationChange.bind(this)
   }
 
   getMatchedData = () => {
-    let newData = this.state.items;
-    let filteredData = [];
-    let filter = "";
+    let newData = this.state.items
+    let filteredData = []
+    let filter = ''
 
     if (this.filter.search) {
-      filter = this.filter.search.toLowerCase();
+      filter = this.filter.search.toLowerCase()
       filteredData = newData.filter((character) => {
-        return character.name.toLowerCase().includes(filter);
-      });
-      newData = filteredData;
+        return character.name.toLowerCase().includes(filter)
+      })
+      newData = filteredData
     }
     if (this.filter.rarity) {
-      filter = this.filter.rarity.toLowerCase();
+      filter = this.filter.rarity.toLowerCase()
       filteredData = newData.filter((character) => {
-        return character.rarity.name.toLowerCase() == filter;
-      });
-      newData = filteredData;
+        return character.rarity.name.toLowerCase() == filter
+      })
+      newData = filteredData
     }
     if (this.filter.element) {
-      filter = this.filter.element.toLowerCase();
+      filter = this.filter.element.toLowerCase()
       filteredData = newData.filter((character) => {
-        return character.element.name.toLowerCase() == filter;
-      });
-      newData = filteredData;
+        return character.element.name.toLowerCase() == filter
+      })
+      newData = filteredData
     }
     if (this.filter.weaponType) {
-      filter = this.filter.weaponType.toLowerCase();
+      filter = this.filter.weaponType.toLowerCase()
       filteredData = newData.filter((character) => {
         return character.weaponType.some((type) => {
-          return type.name.toLowerCase() == filter;
-        });
-      });
-      newData = filteredData;
+          return type.name.toLowerCase() == filter
+        })
+      })
+      newData = filteredData
     }
     if (this.filter.style) {
-      filter = this.filter.style.toLowerCase();
+      filter = this.filter.style.toLowerCase()
       filteredData = newData.filter((character) => {
-        return character.style.name.toLowerCase() == filter;
-      });
-      newData = filteredData;
+        return character.style.name.toLowerCase() == filter
+      })
+      newData = filteredData
     }
     if (this.filter.race) {
-      filter = this.filter.race.toLowerCase();
+      filter = this.filter.race.toLowerCase()
       filteredData = newData.filter((character) => {
         return character.race.some((race) => {
-          return race.name.toLowerCase() == filter;
-        });
-      });
-      newData = filteredData;
+          return race.name.toLowerCase() == filter
+        })
+      })
+      newData = filteredData
     }
 
     //prepare results according to pagination settings
     if (!this.pageChanged) {
-      let pageMax = Math.ceil(newData.length / this.pageElements);
-      this.pageNumber = 0;
-      this.pageMax = pageMax;
+      let pageMax = Math.ceil(newData.length / this.pageElements)
+      this.pageNumber = 0
+      this.pageMax = pageMax
     }
     let initIndex =
-      this.pageNumber == 0 ? 0 : this.pageNumber * this.pageElements + 1;
-    let finalIndex = initIndex + this.pageElements;
-    this.pageChanged = false;
+      this.pageNumber == 0 ? 0 : this.pageNumber * this.pageElements + 1
+    let finalIndex = initIndex + this.pageElements
+    this.pageChanged = false
 
-    filteredData = newData.slice(initIndex, finalIndex);
-    return filteredData;
-  };
+    filteredData = newData.slice(initIndex, finalIndex)
+    return filteredData
+  }
 
   onPaginationChange = (value) => {
     if (this.pageNumber == value || value > this.pageMax || value < 0) {
-      return;
+      return
     }
 
-    this.pageChanged = true;
-    this.pageNumber = value;
-    this.setState({ filteredItems: this.getMatchedData() });
-  };
+    this.pageChanged = true
+    this.pageNumber = value
+    this.setState({ filteredItems: this.getMatchedData() })
+  }
 
   onFilterChange = (filterName, value) => {
-    let changedFilter = this.filter;
+    let changedFilter = this.filter
 
     //ignore clicks in filters currently selected
-    if (filterName == "element") {
+    if (filterName == 'element') {
       if (changedFilter.element == value) {
-        return;
+        return
       } else {
-        changedFilter.element = value;
+        changedFilter.element = value
       }
-    } else if (filterName == "rarity") {
+    } else if (filterName == 'rarity') {
       if (changedFilter.rarity == value) {
-        return;
+        return
       } else {
-        changedFilter.rarity = value;
+        changedFilter.rarity = value
       }
-    } else if (filterName == "weaponType") {
+    } else if (filterName == 'weaponType') {
       if (changedFilter.weaponType == value) {
-        return;
+        return
       } else {
-        changedFilter.weaponType = value;
+        changedFilter.weaponType = value
       }
-    } else if (filterName == "race") {
+    } else if (filterName == 'race') {
       if (changedFilter.race == value) {
-        return;
+        return
       } else {
-        changedFilter.race = value;
+        changedFilter.race = value
       }
-    } else if (filterName == "style") {
+    } else if (filterName == 'style') {
       if (changedFilter.style == value) {
-        return;
+        return
       } else {
-        changedFilter.style = value;
+        changedFilter.style = value
       }
     }
 
-    this.filter = changedFilter;
-    this.setState({ filteredItems: this.getMatchedData() });
-  };
+    this.filter = changedFilter
+    this.setState({ filteredItems: this.getMatchedData() })
+  }
   onSearchChange = (value) => {
-    this.filter.search = value;
-    this.setState({ filteredItems: this.getMatchedData() });
-  };
+    this.filter.search = value
+    this.setState({ filteredItems: this.getMatchedData() })
+  }
   showModal = (character) => {
-    this.setState({ show: true, selectedCharacter: character });
-  };
+    this.setState({ show: true, selectedCharacter: character })
+  }
   hideModal = () => {
-    this.setState({ show: false });
-  };
+    this.setState({ show: false })
+  }
 
   componentDidMount() {
     const url =
-      process.env.REACT_APP_API + process.env.REACT_APP_API_BASECHARACTER;
+      process.env.REACT_APP_API + process.env.REACT_APP_API_BASECHARACTER
     fetch(url)
       .then((res) => res.json())
       .then((charaData) => {
         let charaDataF = charaData.baseCharacters.map((item) => {
-          return item.baseCharacter;
-        });
+          return item.baseCharacter
+        })
 
-        this.pageMax = Math.ceil(charaDataF.length / this.pageElements);
+        this.pageMax = Math.ceil(charaDataF.length / this.pageElements)
         this.setState({
           items: charaDataF,
           filteredItems: charaDataF.slice(0, this.pageElements),
           loading: false,
-        });
+        })
       })
-      .catch(console.log);
+      .catch(console.log)
   }
 
   render() {
     if (this.state.loading) {
       return (
-        <div className="d-flex justify-content-center">
-          <div className="spinner-border loadingSpinner" role="status">
-            <span className="visually-hidden">Loading...</span>
+        <div className='d-flex justify-content-center'>
+          <div className='spinner-border loadingSpinner' role='status'>
+            <span className='visually-hidden'>Loading...</span>
           </div>
         </div>
-      );
+      )
     }
     return (
-      <div className="container mt-4">
-        <Title text="Characters" />
+      <div className='container mt-4'>
+        <Title text='Characters' />
         <CharacterInfo
           show={this.state.show}
           handleClose={this.hideModal}
           character={this.state.selectedCharacter}
-          id="infoModal"
+          id='infoModal'
         />
-        <div className="row col-lg-6 searchField mx-auto">
-          <SearchField onChange={this.onSearchChange} placeholder="Search" />
+        <div className='row col-lg-6 searchField mx-auto'>
+          <SearchField onChange={this.onSearchChange} placeholder='Search' />
         </div>
-        <div className="row col-lg-8 mx-auto">
+        <div className='row col-lg-8 mx-auto'>
           <FilterButtonGroup
             handleChange={this.onFilterChange}
-            name={"weaponType"}
+            name={'weaponType'}
             items={this.props.weaponTypes}
           />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
-            name={"element"}
+            name={'element'}
             items={this.props.elements}
           />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
-            name={"race"}
+            name={'race'}
             items={this.props.races}
           />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
-            name={"style"}
+            name={'style'}
             items={this.props.styles}
           />
           <FilterButtonGroup
             handleChange={this.onFilterChange}
-            name={"rarity"}
+            name={'rarity'}
             items={this.props.rarities}
           />
         </div>
-        <div className="row mt-3">
+        <div className='row mt-3'>
           {this.state.filteredItems.map((character, index) => (
             <ImageButton
               key={index}
               item={character}
               handleClick={this.showModal}
-              modalTarget="#infoModal"
+              modalTarget='#infoModal'
             />
           ))}
         </div>
-        <div className="row mt-1 mb-3">
+        <div className='row mt-1 mb-3'>
           <Pagination
             handleChange={this.onPaginationChange}
             pageMax={this.pageMax}
@@ -255,7 +255,7 @@ export class CharacterReference extends React.Component {
           />
         </div>
       </div>
-    );
+    )
   }
 }
 
@@ -265,4 +265,4 @@ CharacterReference.propTypes = {
   rarities: PropTypes.array,
   styles: PropTypes.array,
   weaponTypes: PropTypes.array,
-};
+}
