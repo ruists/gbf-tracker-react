@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useReducer, useState } from 'react'
 import { render } from 'react-dom'
 import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
 import { PrivateRoute } from './utils/PrivateRoute'
@@ -27,20 +27,23 @@ function logout() {
 }
 
 function App() {
-  const [loading, setLoading] = useState(true)
   const [auth, setAuth] = useState({
     isAuthenticated: false,
     currentUser: null,
   })
-  const [data, setData] = useState({
+  const [data, setData] = useReducer(dataReducer, {
     elements: [],
     rarities: [],
     races: [],
     weaponTypes: [],
     styles: [],
+    loading: true,
   })
-
   let userSubscription = null
+
+  function dataReducer(state, newState) {
+    return { ...newState, loading: false }
+  }
 
   //fetch data needed throughout the app
   useEffect(() => {
@@ -85,7 +88,6 @@ function App() {
           weaponTypes: wTypeDataF,
           styles: styleDataF,
         })
-        setLoading(false)
 
         userSubscription = authenticationService.currentUser.subscribe((x) =>
           setAuth({ currentUser: x, isAuthenticated: x != null })
@@ -105,7 +107,7 @@ function App() {
             handleLogout={logout}
             userName={auth.currentUser?.name}
           />
-          {auth.loading ? (
+          {data.loading ? (
             <div className='d-flex justify-content-center'>
               <div
                 className='spinner-border loadingSpinner align-middle'
