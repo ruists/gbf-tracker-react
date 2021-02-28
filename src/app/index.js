@@ -1,6 +1,6 @@
 import React, { useEffect, useReducer, useState } from 'react'
 import { render } from 'react-dom'
-import { BrowserRouter as Router, Switch, Route, Link } from 'react-router-dom'
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom'
 import { PrivateRoute } from './utils/PrivateRoute'
 import { Header } from './components/Header'
 import { SummonReference } from './components/reference/SummonReference'
