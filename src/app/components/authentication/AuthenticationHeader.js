@@ -1,14 +1,17 @@
 import React from 'react'
 import { LoginHeader } from './LoginHeader'
-import { Link, useHistory } from 'react-router-dom'
+import { Link, useHistory, useLocation } from 'react-router-dom'
 
 export function AuthenticationHeader(props) {
   const history = useHistory()
+  const location = useLocation()
 
-  const logout = () => {
+  function logout() {
+    const referenceRoutes = 'ref'
+
     props.handleLogout()
 
-    history.push('/')
+    if (!location.pathname.includes(referenceRoutes)) history.push('/')
   }
 
   return props.isAuthenticated ? (
