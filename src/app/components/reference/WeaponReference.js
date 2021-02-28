@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef, useState, useReducer, useEffect } from 'react'
 import SearchField from 'react-search-field'
 import PropTypes from 'prop-types'
 import { WeaponInfo } from './modals/WeaponInfo'
@@ -10,63 +10,96 @@ import { baseItemFilter } from 'app/utils/filterData'
 import 'app/styles/reference.css'
 import 'app/styles/general.css'
 
-export class WeaponReference extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      item: [],
-      filteredItems: [],
-      show: false,
-      selectedWeapon: undefined,
-      loading: true,
+export function WeaponReference(props) {
+  const [data, setData] = useReducer(dataReducer, {
+    items: [],
+    filteredItems: [],
+    loading: true,
+  })
+
+  const [modal, setModal] = useReducer(modalReducer, {
+    show: false,
+    selectedWeapon: undefined,
+  })
+
+  const filter = useRef({
+    search: '',
+    rarity: '',
+    element: '',
+    race: '',
+    weaponType: '',
+  })
+
+  const pagination = useRef({
+    pageElements: 120,
+    pageMax: 1,
+    pageNumber: 0,
+    pageChanged: false,
+  })
+
+  function dataReducer(state, newData) {
+    //initial data
+    if (newData.items) {
+      return { ...newData, loading: false }
     }
 
-    this.filter = {
-      search: '',
-      rarity: '',
-      element: '',
-      weaponType: '',
+    //update only filteredItems
+    return { ...state, filteredItems: newData }
+  }
+  function modalReducer(state, opt) {
+    if (!opt.show) {
+      return { show: false, selectedWeapon: undefined }
+    } else {
+      return { show: true, selectedWeapon: opt.selectedWeapon }
     }
-
-    this.pagination = {
-      pageElements: 120,
-      pageMax: 1,
-      pageNumber: 0,
-      pageChanged: false,
-    }
-
-    this.showModal = this.showModal.bind(this)
-    this.hideModal = this.hideModal.bind(this)
-    this.onSearchChange = this.onSearchChange.bind(this)
-    this.onFilterChange = this.onFilterChange.bind(this)
-    this.onPaginationChange = this.onPaginationChange.bind(this)
   }
 
-  getMatchedData = () => {
+  useEffect(() => {
+    const url = process.env.REACT_APP_API + process.env.REACT_APP_API_BASEWEAPON
+    fetch(url)
+      .then((res) => res.json())
+      .then((weaponData) => {
+        let weaponDataF = weaponData.baseWeapons.map((item) => {
+          return item.baseWeapon
+        })
+
+        pagination.current.pageMax = Math.ceil(
+          weaponDataF.length / pagination.current.pageElements
+        )
+        setData({
+          items: weaponDataF,
+          filteredItems: weaponDataF.slice(0, pagination.current.pageElements),
+        })
+      })
+      .catch(console.log)
+  }, [])
+
+  function getMatchedData() {
     const [filteredData, newPagination] = baseItemFilter(
-      this.state.items,
-      this.filter,
-      this.pagination
+      data.items,
+      filter.current,
+      pagination.current
     )
-    this.pagination = newPagination
-    this.setState({ filteredItems: filteredData })
+    pagination.current = newPagination
+    setData(filteredData)
   }
 
-  onPaginationChange = (value) => {
+  function onPaginationChange(value) {
     if (
-      this.pagination.pageNumber == value ||
-      value > this.pagination.pageMax ||
+      pagination.current.pageNumber == value ||
+      value > pagination.current.pageMax ||
       value < 0
     ) {
       return
     }
 
-    this.pagination.pageChanged = true
-    this.pagination.pageNumber = value
-    this.getMatchedData()
+    pagination.current.pageChanged = true
+    pagination.current.pageNumber = value
+    getMatchedData()
   }
-  onFilterChange = (filterName, value) => {
-    let changedFilter = this.filter
+
+  function onFilterChange(filterName, value) {
+    let changedFilter = filter.current
 
     //ignore clicks in filters currently selected
     if (filterName == 'element') {
@@ -89,100 +122,79 @@ export class WeaponReference extends React.Component {
       }
     }
 
-    this.filter = changedFilter
-    this.getMatchedData()
-  }
-  onSearchChange = (value) => {
-    this.filter.search = value
-    this.getMatchedData()
-  }
-  showModal = (weapon) => {
-    this.setState({ show: true, selectedWeapon: weapon })
-  }
-  hideModal = () => {
-    this.setState({ show: false })
+    filter.current = changedFilter
+    getMatchedData()
   }
 
-  componentDidMount() {
-    const url = process.env.REACT_APP_API + process.env.REACT_APP_API_BASEWEAPON
-    fetch(url)
-      .then((res) => res.json())
-      .then((weaponData) => {
-        let weaponDataF = weaponData.baseWeapons.map((item) => {
-          return item.baseWeapon
-        })
-
-        this.pagination.pageMax = Math.ceil(
-          weaponDataF.length / this.pagination.pageElements
-        )
-        this.setState({
-          items: weaponDataF,
-          filteredItems: weaponDataF.slice(0, this.pagination.pageElements),
-          loading: false,
-        })
-      })
-      .catch(console.log)
+  function onSearchChange(value) {
+    filter.current.search = value
+    getMatchedData()
   }
 
-  render() {
-    if (this.state.loading) {
-      return (
-        <div className='d-flex justify-content-center'>
-          <div className='spinner-border loadingSpinner' role='status'>
-            <span className='visually-hidden'>Loading...</span>
-          </div>
-        </div>
-      )
-    }
+  function showModal(weapon) {
+    setModal({ show: true, selectedWeapon: weapon })
+  }
+  function hideModal() {
+    setModal({ show: false })
+  }
+
+  if (data.loading) {
     return (
-      <div className='container mt-4'>
-        <Title text='Weapons' />
-        <WeaponInfo
-          show={this.state.show}
-          handleClose={this.hideModal}
-          weapon={this.state.selectedWeapon}
-          id='infoModal'
-        />
-        <div className='row col-lg-6 searchField mx-auto'>
-          <SearchField onChange={this.onSearchChange} placeholder='Search' />
-        </div>
-        <div className='row col-lg-8 mx-auto'>
-          <FilterButtonGroup
-            items={this.props.weaponTypes}
-            name='weaponType'
-            handleChange={this.onFilterChange}
-          />
-          <FilterButtonGroup
-            items={this.props.elements}
-            name='element'
-            handleChange={this.onFilterChange}
-          />
-          <FilterButtonGroup
-            items={this.props.rarities}
-            name='rarity'
-            handleChange={this.onFilterChange}
-          />
-        </div>
-        <div className='row mt-3'>
-          {this.state.filteredItems.map((weapon, index) => (
-            <ImageButton
-              key={index}
-              item={weapon}
-              handleClick={this.showModal}
-              modalTarget='#infoModal'
-            />
-          ))}
-        </div>
-        <div className='row mt-1 mb-3'>
-          <Pagination
-            handleChange={this.onPaginationChange}
-            pageMax={this.pagination.pageMax}
-            currentPage={this.pagination.pageNumber + 1}
-          />
+      <div className='d-flex justify-content-center'>
+        <div className='spinner-border loadingSpinner' role='status'>
+          <span className='visually-hidden'>Loading...</span>
         </div>
       </div>
     )
   }
+  return (
+    <div className='container mt-4'>
+      <Title text='Weapons' />
+      <WeaponInfo
+        show={modal.show}
+        handleClose={hideModal}
+        weapon={modal.selectedWeapon}
+        id='infoModal'
+      />
+      <div className='row col-lg-6 searchField mx-auto'>
+        <SearchField onChange={onSearchChange} placeholder='Search' />
+      </div>
+      <div className='row col-lg-8 mx-auto'>
+        <FilterButtonGroup
+          items={props.weaponTypes}
+          name='weaponType'
+          handleChange={onFilterChange}
+        />
+        <FilterButtonGroup
+          items={props.elements}
+          name='element'
+          handleChange={onFilterChange}
+        />
+        <FilterButtonGroup
+          items={props.rarities}
+          name='rarity'
+          handleChange={onFilterChange}
+        />
+      </div>
+      <div className='row mt-3'>
+        {data.filteredItems.map((weapon, index) => (
+          <ImageButton
+            key={index}
+            item={weapon}
+            handleClick={showModal}
+            modalTarget='#infoModal'
+          />
+        ))}
+      </div>
+      <div className='row mt-1 mb-3'>
+        <Pagination
+          handleChange={onPaginationChange}
+          pageMax={pagination.current.pageMax}
+          currentPage={pagination.current.pageNumber + 1}
+        />
+      </div>
+    </div>
+  )
 }
 
 WeaponReference.propTypes = {

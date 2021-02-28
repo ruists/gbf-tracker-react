@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useReducer, useRef } from 'react'
 import SearchField from 'react-search-field'
 import PropTypes from 'prop-types'
 import { Title } from '../utils/Title'
@@ -10,67 +10,98 @@ import { baseItemFilter } from 'app/utils/filterData'
 import 'app/styles/general.css'
 import 'app/styles/reference.css'
 
-export class CharacterReference extends React.Component {
-  constructor(props) {
-    super(props)
+export function CharacterReference(props) {
+  const [data, setData] = useReducer(dataReducer, {
+    items: [],
+    filteredItems: [],
+    loading: true,
+  })
 
-    this.state = {
-      items: [],
-      filteredItems: [],
-      show: false,
-      selectedCharacter: undefined,
-      loading: true,
+  const [modal, setModal] = useReducer(modalReducer, {
+    show: false,
+    selectedCharacter: undefined,
+  })
+
+  const filter = useRef({
+    search: '',
+    rarity: '',
+    element: '',
+    race: '',
+    weaponType: '',
+  })
+
+  const pagination = useRef({
+    pageElements: 120,
+    pageMax: 1,
+    pageNumber: 0,
+    pageChanged: false,
+  })
+
+  function dataReducer(state, newData) {
+    //initial data
+    if (newData.items) {
+      return { ...newData, loading: false }
     }
 
-    this.filter = {
-      search: '',
-      rarity: '',
-      element: '',
-      race: '',
-      weaponType: '',
+    //update only filteredItems
+    return { ...state, filteredItems: newData }
+  }
+  function modalReducer(state, opt) {
+    if (!opt.show) {
+      return { show: false, selectedCharacter: undefined }
+    } else {
+      return { show: true, selectedCharacter: opt.selectedCharacter }
     }
-
-    this.pagination = {
-      pageElements: 120,
-      pageMax: 1,
-      pageNumber: 0,
-      pageChanged: false,
-    }
-
-    this.showModal = this.showModal.bind(this)
-    this.hideModal = this.hideModal.bind(this)
-    this.onSearchChange = this.onSearchChange.bind(this)
-    this.onFilterChange = this.onFilterChange.bind(this)
-    this.onPaginationChange = this.onPaginationChange.bind(this)
   }
 
-  getMatchedData = () => {
+  useEffect(() => {
+    const url =
+      process.env.REACT_APP_API + process.env.REACT_APP_API_BASECHARACTER
+    fetch(url)
+      .then((res) => res.json())
+      .then((charaData) => {
+        let charaDataF = charaData.baseCharacters.map((item) => {
+          return item.baseCharacter
+        })
+
+        pagination.current.pageMax = Math.ceil(
+          charaDataF.length / pagination.current.pageElements
+        )
+
+        setData({
+          items: charaDataF,
+          filteredItems: charaDataF.slice(0, pagination.current.pageElements),
+        })
+      })
+      .catch(console.log)
+  }, [])
+
+  function getMatchedData() {
     const [filteredData, newPagination] = baseItemFilter(
-      this.state.items,
-      this.filter,
-      this.pagination
+      data.items,
+      filter.current,
+      pagination.current
     )
-    this.pagination = newPagination
-    this.setState({ filteredItems: filteredData })
+    pagination.current = newPagination
+    setData(filteredData)
   }
 
-  onPaginationChange = (value) => {
+  function onPaginationChange(value) {
     if (
-      this.pagination.pageNumber == value ||
-      value > this.pagination.pageMax ||
+      pagination.current.pageNumber == value ||
+      value > pagination.current.pageMax ||
       value < 0
     ) {
       return
     }
 
-    this.pagination.pageChanged = true
-    this.pagination.pageNumber = value
-    this.getMatchedData()
-    // this.setState({ filteredItems: this.getMatchedData() })
+    pagination.current.pageChanged = true
+    pagination.current.pageNumber = value
+    getMatchedData()
   }
 
-  onFilterChange = (filterName, value) => {
-    let changedFilter = this.filter
+  function onFilterChange(filterName, value) {
+    let changedFilter = filter.current
 
     //ignore clicks in filters currently selected
     if (filterName == 'element') {
@@ -105,115 +136,88 @@ export class CharacterReference extends React.Component {
       }
     }
 
-    this.filter = changedFilter
-    this.getMatchedData()
-    // this.setState({ filteredItems: this.getMatchedData() })
-  }
-  onSearchChange = (value) => {
-    this.filter.search = value
-    this.getMatchedData()
-    // this.setState({ filteredItems: this.getMatchedData() })
-  }
-  showModal = (character) => {
-    this.setState({ show: true, selectedCharacter: character })
-  }
-  hideModal = () => {
-    this.setState({ show: false })
+    filter.current = changedFilter
+    getMatchedData()
   }
 
-  componentDidMount() {
-    const url =
-      process.env.REACT_APP_API + process.env.REACT_APP_API_BASECHARACTER
-    fetch(url)
-      .then((res) => res.json())
-      .then((charaData) => {
-        let charaDataF = charaData.baseCharacters.map((item) => {
-          return item.baseCharacter
-        })
-
-        this.pagination.pageMax = Math.ceil(
-          charaDataF.length / this.pagination.pageElements
-        )
-
-        console.log(this.pagination.pageMax)
-        this.setState({
-          items: charaDataF,
-          filteredItems: charaDataF.slice(0, this.pageElements),
-          loading: false,
-        })
-      })
-      .catch(console.log)
+  function onSearchChange(value) {
+    filter.current.search = value
+    getMatchedData()
+  }
+  function showModal(character) {
+    setModal({ show: true, selectedCharacter: character })
+  }
+  function hideModal() {
+    setModal({ show: false })
   }
 
-  render() {
-    if (this.state.loading) {
-      return (
-        <div className='d-flex justify-content-center'>
-          <div className='spinner-border loadingSpinner' role='status'>
-            <span className='visually-hidden'>Loading...</span>
-          </div>
-        </div>
-      )
-    }
+  if (data.loading) {
     return (
-      <div className='container mt-4'>
-        <Title text='Characters' />
-        <CharacterInfo
-          show={this.state.show}
-          handleClose={this.hideModal}
-          character={this.state.selectedCharacter}
-          id='infoModal'
-        />
-        <div className='row col-lg-6 searchField mx-auto'>
-          <SearchField onChange={this.onSearchChange} placeholder='Search' />
-        </div>
-        <div className='row col-lg-8 mx-auto'>
-          <FilterButtonGroup
-            handleChange={this.onFilterChange}
-            name={'weaponType'}
-            items={this.props.weaponTypes}
-          />
-          <FilterButtonGroup
-            handleChange={this.onFilterChange}
-            name={'element'}
-            items={this.props.elements}
-          />
-          <FilterButtonGroup
-            handleChange={this.onFilterChange}
-            name={'race'}
-            items={this.props.races}
-          />
-          <FilterButtonGroup
-            handleChange={this.onFilterChange}
-            name={'style'}
-            items={this.props.styles}
-          />
-          <FilterButtonGroup
-            handleChange={this.onFilterChange}
-            name={'rarity'}
-            items={this.props.rarities}
-          />
-        </div>
-        <div className='row mt-3'>
-          {this.state.filteredItems.map((character, index) => (
-            <ImageButton
-              key={index}
-              item={character}
-              handleClick={this.showModal}
-              modalTarget='#infoModal'
-            />
-          ))}
-        </div>
-        <div className='row mt-1 mb-3'>
-          <Pagination
-            handleChange={this.onPaginationChange}
-            pageMax={this.pagination.pageMax}
-            currentPage={this.pagination.pageNumber + 1}
-          />
+      <div className='d-flex justify-content-center'>
+        <div className='spinner-border loadingSpinner' role='status'>
+          <span className='visually-hidden'>Loading...</span>
         </div>
       </div>
     )
   }
+  return (
+    <div className='container mt-4'>
+      <Title text='Characters' />
+      <CharacterInfo
+        show={modal.show}
+        handleClose={hideModal}
+        character={modal.selectedCharacter}
+        id='infoModal'
+      />
+      <div className='row col-lg-6 searchField mx-auto'>
+        <SearchField onChange={onSearchChange} placeholder='Search' />
+      </div>
+      <div className='row col-lg-8 mx-auto'>
+        <FilterButtonGroup
+          handleChange={onFilterChange}
+          name={'weaponType'}
+          items={props.weaponTypes}
+        />
+        <FilterButtonGroup
+          handleChange={onFilterChange}
+          name={'element'}
+          items={props.elements}
+        />
+        <FilterButtonGroup
+          handleChange={onFilterChange}
+          name={'race'}
+          items={props.races}
+        />
+        <FilterButtonGroup
+          handleChange={onFilterChange}
+          name={'style'}
+          items={props.styles}
+        />
+        <FilterButtonGroup
+          handleChange={onFilterChange}
+          name={'rarity'}
+          items={props.rarities}
+        />
+      </div>
+      <div className='row mt-3'>
+        {data.filteredItems.map((character, index) => (
+          <ImageButton
+            key={index}
+            item={character}
+            handleClick={showModal}
+            modalTarget='#infoModal'
+          />
+        ))}
+      </div>
+      <div className='row mt-1 mb-3'>
+        <Pagination
+          handleChange={onPaginationChange}
+          pageMax={pagination.current.pageMax}
+          currentPage={pagination.current.pageNumber + 1}
+        />
+      </div>
+    </div>
+  )
 }
 
 CharacterReference.propTypes = {
