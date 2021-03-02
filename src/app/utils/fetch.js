@@ -1,6 +1,6 @@
 import { authenticationService } from 'app/services/authentication.service'
 
-export async function authorizedFetch(method, url, body) {
+export async function authorizedFetch(method, url, reqBody) {
   if (method != 'POST' && method != 'GET') {
     return -1
   }
@@ -9,15 +9,20 @@ export async function authorizedFetch(method, url, body) {
   }
 
   const userInfo = authenticationService.currentUserValue
-  const body = {
-    usr: userInfo.name,
-    token: userInfo,
-    ...body,
-  }
+  const body =
+    method == 'GET'
+      ? undefined
+      : JSON.stringify({
+          token: userInfo.token,
+          ...reqBody,
+        })
   const reqOptions = {
     method: method,
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
+    headers: {
+      'Content-Type': 'application/json',
+      Authorization: userInfo.token,
+    },
+    body: body,
   }
 
   const res = await fetch(url, reqOptions)
