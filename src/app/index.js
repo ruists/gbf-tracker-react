@@ -6,6 +6,7 @@ import { Header } from './components/Header'
 import { SummonReference } from './components/reference/SummonReference'
 import { WeaponReference } from './components/reference/WeaponReference'
 import { CharacterReference } from './components/reference/CharacterReference'
+import { CharacterInventory } from './components/inventory/CharacterInventory'
 import { Register } from './components/authentication/Register'
 import { NotAuthenticated } from './components/error/NotAuthenticated'
 import { authenticationService } from './services/authentication.service'
@@ -149,7 +150,15 @@ function App() {
                 <NotAuthenticated />
               </Route>
               <PrivateRoute path='/weapon'></PrivateRoute>
-              <PrivateRoute path='/character'></PrivateRoute>
+              <PrivateRoute path='/character'>
+                <CharacterInventory
+                  races={data.races}
+                  rarities={removeNeutralRarity(data.rarities)}
+                  elements={data.elements}
+                  weaponTypes={data.weaponTypes}
+                  styles={data.styles}
+                />
+              </PrivateRoute>
               <PrivateRoute path='/summon'></PrivateRoute>
             </Switch>
           )}

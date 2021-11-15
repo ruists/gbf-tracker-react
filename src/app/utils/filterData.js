@@ -66,3 +66,7 @@ export function baseItemFilter(items, filterOpt, pagination) {
 
   return [filteredData, newPagination]
 }
+
+export function inventoryItemFilter(items, filterOpt, pagination) {
+  return items
+}
