@@ -28,9 +28,7 @@ export function baseItemFilter(items, filterOpt, pagination) {
   if (filterOpt.weaponType) {
     filter = filterOpt.weaponType.toLowerCase()
     filteredData = newData.filter((item) => {
-      return item.weaponType.some((type) => {
-        return type.name.toLowerCase() == filter
-      })
+      return item.weaponType.name.toLowerCase() == filter
     })
     newData = filteredData
   }
